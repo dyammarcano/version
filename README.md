@@ -1,2 +1,1 @@
-# version
-version manager component
+# Version display and features count

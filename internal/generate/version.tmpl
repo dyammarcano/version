@@ -1,0 +1,40 @@
+// this file version.go was generated with go generate command
+
+package version
+
+import "fmt"
+
+var ver *Version
+
+type Version struct {
+	Version    string   `json:"version"`
+	CommitHash string   `json:"commitHash"`
+	Date       string   `json:"date"`
+	Signature  string   `json:"signature"`
+    Features   []string `json:"features"`
+}
+
+func init() {
+	ver = &Version{
+		Version:    "{{.Version}}",
+		CommitHash: "{{.CommitHash}}",
+		Date:       "{{.Date}}",
+		Signature:  "{{.Signature}}",
+		Features:   []string{},
+	}
+}
+
+// GetAsString returns the string representation of the version
+func GetAsString() string {
+	return fmt.Sprintf("Version: %s, CommitHash: %s, Date: %s, Features: %s", ver.Version, ver.CommitHash, ver.Date, ver.Features)
+}
+
+// AddFeature adds a feature description
+func AddFeature(feature string) {
+	ver.Features = append(ver.Features, feature)
+}
+
+// Get returns the Info struct
+func Get() Version {
+	return *ver
+}
