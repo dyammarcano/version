@@ -7,8 +7,6 @@ import (
 
 func TestVersion(t *testing.T) {
 	AddFeature("feature1")
-	AddFeature("feature2")
-	AddFeature("feature3")
 
 	g := Get()
 
