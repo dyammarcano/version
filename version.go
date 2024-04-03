@@ -24,11 +24,6 @@ func init() {
 	}
 }
 
-// GetAsString returns the string representation of the version
-func GetAsString() string {
-	return fmt.Sprintf("Version: %s, CommitHash: %s, Date: %s, Features: %s", ver.Version, ver.CommitHash, ver.Date, ver.Features)
-}
-
 // AddFeature adds a feature description
 func AddFeature(feature string) {
 	ver.Features = append(ver.Features, feature)
@@ -37,4 +32,24 @@ func AddFeature(feature string) {
 // Get returns the Info struct
 func Get() Version {
 	return *ver
+}
+
+// GetFeatures returns the version
+func GetFeatures() string {
+	return fmt.Sprintf("Features: %s", ver.Features)
+}
+
+// GetCommitHash returns the commit hash
+func GetCommitHash() string {
+	return fmt.Sprintf("CommitHash: %s", ver.CommitHash)
+}
+
+// GetDate returns the date
+func GetDate() string {
+	return fmt.Sprintf("Date: %s", ver.Date)
+}
+
+// GetVersion returns the version
+func GetVersion() string {
+	return fmt.Sprintf("Version: %s", ver.Version)
 }
