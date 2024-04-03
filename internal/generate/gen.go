@@ -27,7 +27,7 @@ type Version struct {
 var repo *git.Repository
 
 func init() {
-	projectPath, err := filepath.Abs("../../../")
+	projectPath, err := filepath.Abs("../../")
 	checkErr(err)
 
 	log.Infof("open git project: %s", projectPath)
@@ -73,7 +73,8 @@ func getTag() (string, error) {
 		return "", err
 	}
 
-	var tag string
+	tag := "v0.0.1-dev"
+
 	callback := func(ref *plumbing.Reference) error {
 		if ref.Name().IsTag() {
 			tag = ref.Name().Short()
@@ -82,9 +83,6 @@ func getTag() (string, error) {
 	}
 
 	if err = tags.ForEach(callback); err != nil {
-		return "", err
-	}
-	if err != nil {
 		return "", err
 	}
 
@@ -131,10 +129,6 @@ func main() {
 
 	tag, err := getTag()
 	checkErr(err)
-
-	if tag == "" {
-		tag = "v0.0.1-dev"
-	}
 
 	data := Version{
 		Version:    tag,
