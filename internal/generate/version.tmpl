@@ -2,20 +2,23 @@
 
 package version
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-var ver *Version
+var i *info
 
-type Version struct {
+type info struct {
 	Version    string   `json:"version"`
 	CommitHash string   `json:"commitHash"`
 	Date       string   `json:"date"`
 	Signature  string   `json:"signature"`
-    Features   []string `json:"features"`
+	Features   []string `json:"features"`
 }
 
 func init() {
-	ver = &Version{
+	i = &info{
 		Version:    "{{.Version}}",
 		CommitHash: "{{.CommitHash}}",
 		Date:       "{{.Date}}",
@@ -24,17 +27,36 @@ func init() {
 	}
 }
 
-// GetAsString returns the string representation of the version
-func GetAsString() string {
-	return fmt.Sprintf("Version: %s, CommitHash: %s, Date: %s, Features: %s", ver.Version, ver.CommitHash, ver.Date, ver.Features)
-}
-
 // AddFeature adds a feature description
 func AddFeature(feature string) {
-	ver.Features = append(ver.Features, feature)
+	i.Features = append(i.Features, feature)
 }
 
-// Get returns the Info struct
-func Get() Version {
-	return *ver
+// GetFeatures returns the info
+func GetFeatures() string {
+	return fmt.Sprintf("Features: [%s]", strings.Join(i.Features, ", "))
+}
+
+// GetCommitHash returns the commit hash
+func GetCommitHash() string {
+	return fmt.Sprintf("CommitHash: %s", i.CommitHash)
+}
+
+// GetDate returns the date
+func GetDate() string {
+	return fmt.Sprintf("Date: %s", i.Date)
+}
+
+// GetVersion returns the info
+func GetVersion() string {
+	return fmt.Sprintf("Version: %s", i.Version)
+}
+
+// GetSignature returns the signature
+func GetSignature() string {
+	return fmt.Sprintf("Signature: %s", i.Signature)
+}
+
+func GetVersionInfo() string {
+	return fmt.Sprintf("%s, %s, %s, %s, %s", GetVersion(), GetCommitHash(), GetDate(), GetSignature(), GetFeatures())
 }

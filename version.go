@@ -1,4 +1,4 @@
-// this file info.go was generated with go generate command
+// this file version.go was generated with go generate command
 
 package version
 
@@ -20,9 +20,9 @@ type info struct {
 func init() {
 	i = &info{
 		Version:    "v0.0.1-dev",
-		CommitHash: "27f8696fd83d8420fdce788afd259c1ffcf8ed9e",
-		Date:       "2024-04-03T15:05:54Z",
-		Signature:  "2ZhrXZRLBymyvmDhbReXW6xtxi5Ynhm5WaurSEHk4GT7",
+		CommitHash: "f619bdc00a3461d6f0c16a83f40b08c0a0bf2496",
+		Date:       "2024-04-04T07:58:55Z",
+		Signature:  "8BGNzX2MvdncYtLdjgWUkkJ7uUjuFjAQ6FvKdtftsadF",
 		Features:   []string{},
 	}
 }
