@@ -6,10 +6,12 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	AddFeature("feature1")
+	AddFeature("mysql")
+	AddFeature("kafka")
+	AddFeature("redis")
 
-	g := Get()
+	assert.Equal(t, "Version: v0.0.1-dev", GetVersion())
+	assert.Equal(t, "Features: [mysql, kafka, redis]", GetFeatures())
 
-	assert.Equal(t, "v0.0.1-dev", g.Version)
-	assert.Equal(t, "feature1", g.Features[0])
+	t.Log(GetVersionInfo())
 }
