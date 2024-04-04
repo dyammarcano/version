@@ -19,44 +19,43 @@ type info struct {
 
 func init() {
 	i = &info{
-		Version:    "v0.0.1-dev",
-		CommitHash: "f619bdc00a3461d6f0c16a83f40b08c0a0bf2496",
-		Date:       "2024-04-04T07:58:55Z",
-		Signature:  "8BGNzX2MvdncYtLdjgWUkkJ7uUjuFjAQ6FvKdtftsadF",
+		Version:    "v0.0.0",
+		CommitHash: "f0f717bc06750d9870e1bf825bdd0f9e842e27c7",
+		Date:       "2024-04-04T08:20:22Z",
+		Signature:  "FXiDqB3tbiotUAYmp8hbcVABv3431XDT4evaTPy5RExq",
 		Features:   []string{},
 	}
 }
 
 // AddFeature adds a feature description
 func AddFeature(feature string) {
-	i.Features = append(i.Features, feature)
-}
-
-// GetFeatures returns the info
-func GetFeatures() string {
-	return fmt.Sprintf("Features: [%s]", strings.Join(i.Features, ", "))
-}
-
-// GetCommitHash returns the commit hash
-func GetCommitHash() string {
-	return fmt.Sprintf("CommitHash: %s", i.CommitHash)
-}
-
-// GetDate returns the date
-func GetDate() string {
-	return fmt.Sprintf("Date: %s", i.Date)
-}
-
-// GetVersion returns the info
-func GetVersion() string {
-	return fmt.Sprintf("Version: %s", i.Version)
+	i.Features = append(i.Features, fmt.Sprintf("+%s", feature))
 }
 
 // GetSignature returns the signature
 func GetSignature() string {
-	return fmt.Sprintf("Signature: %s", i.Signature)
+	return i.Signature
 }
 
+// GetVersionInfo returns the info
 func GetVersionInfo() string {
-	return fmt.Sprintf("%s, %s, %s, %s, %s", GetVersion(), GetCommitHash(), GetDate(), GetSignature(), GetFeatures())
+	var sb strings.Builder
+	sb.WriteString(i.Version)
+
+	if i.CommitHash != "" {
+		sb.WriteString("-")
+		sb.WriteString(i.CommitHash)
+	}
+
+	if i.Date != "" {
+		sb.WriteString("-")
+		sb.WriteString(i.Date)
+	}
+
+	if len(i.Features) > 0 {
+		sb.WriteString(" ")
+		sb.WriteString(strings.Join(i.Features, " "))
+	}
+
+	return sb.String()
 }

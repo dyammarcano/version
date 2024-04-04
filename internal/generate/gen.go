@@ -73,7 +73,7 @@ func getTag() (string, error) {
 		return "", err
 	}
 
-	tag := "v0.0.1-dev"
+	tag := "v0.0.0"
 
 	callback := func(ref *plumbing.Reference) error {
 		if ref.Name().IsTag() {

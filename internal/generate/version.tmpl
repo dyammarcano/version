@@ -29,34 +29,33 @@ func init() {
 
 // AddFeature adds a feature description
 func AddFeature(feature string) {
-	i.Features = append(i.Features, feature)
-}
-
-// GetFeatures returns the info
-func GetFeatures() string {
-	return fmt.Sprintf("Features: [%s]", strings.Join(i.Features, ", "))
-}
-
-// GetCommitHash returns the commit hash
-func GetCommitHash() string {
-	return fmt.Sprintf("CommitHash: %s", i.CommitHash)
-}
-
-// GetDate returns the date
-func GetDate() string {
-	return fmt.Sprintf("Date: %s", i.Date)
-}
-
-// GetVersion returns the info
-func GetVersion() string {
-	return fmt.Sprintf("Version: %s", i.Version)
+	i.Features = append(i.Features, fmt.Sprintf("+%s", feature))
 }
 
 // GetSignature returns the signature
 func GetSignature() string {
-	return fmt.Sprintf("Signature: %s", i.Signature)
+	return i.Signature
 }
 
+// GetVersionInfo returns the info
 func GetVersionInfo() string {
-	return fmt.Sprintf("%s, %s, %s, %s, %s", GetVersion(), GetCommitHash(), GetDate(), GetSignature(), GetFeatures())
+	var sb strings.Builder
+	sb.WriteString(i.Version)
+
+	if i.CommitHash != "" {
+		sb.WriteString("-")
+		sb.WriteString(i.CommitHash)
+	}
+
+	if i.Date != "" {
+		sb.WriteString("-")
+		sb.WriteString(i.Date[:10]) // format date to yyyy-mm-dd
+	}
+
+	if len(i.Features) > 0 {
+		sb.WriteString(" ")
+		sb.WriteString(strings.Join(i.Features, " "))
+	}
+
+	return sb.String()
 }
