@@ -12,10 +12,10 @@ import (
 var i *info
 
 type info struct {
-	Version    string   ` + "json:\"version\"" + `
-	CommitHash string   ` + "json:\"commitHash\"" + `
-	Date       string   ` + "json:\"date\"" + `
-	Features   []string ` + "json:\"features\"" + `
+	Version    string   ` + "`json:\"version\"`" + `
+	CommitHash string   ` + "`json:\"commitHash\"`" + `
+	Date       string   ` + "`json:\"date\"`" + `
+	Features   []string ` + "`json:\"features\"`" + `
 }
 
 func init() {
