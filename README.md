@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-    ver, err := NewVersion()
+    ver, err := version.NewVersion()
     if err != nil {
         fmt.Println(err)
         return
