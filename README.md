@@ -15,13 +15,13 @@ import (
 )
 
 func main() {
-	ver, err := NewVersion()
-	if err != nil {
+    ver, err := NewVersion()
+    if err != nil {
         fmt.Println(err)
         return
     }
 	
-	if err = ver.Generate(); err != nil {
+    if err = ver.Generate(); err != nil {
         fmt.Println(err)
         return
     }
