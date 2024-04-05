@@ -13,7 +13,6 @@ type info struct {
 	Version    string   `json:"version"`
 	CommitHash string   `json:"commitHash"`
 	Date       string   `json:"date"`
-	Signature  string   `json:"signature"`
 	Features   []string `json:"features"`
 }
 
@@ -22,7 +21,6 @@ func init() {
 		Version:    "{{.Version}}",
 		CommitHash: "{{.CommitHash}}",
 		Date:       "{{.Date}}",
-		Signature:  "{{.Signature}}",
 		Features:   []string{},
 	}
 }
@@ -30,11 +28,6 @@ func init() {
 // AddFeature adds a feature description
 func AddFeature(feature string) {
 	i.Features = append(i.Features, fmt.Sprintf("+%s", feature))
-}
-
-// GetSignature returns the signature
-func GetSignature() string {
-	return i.Signature
 }
 
 // GetVersionInfo returns the info
