@@ -21,7 +21,7 @@ type (
 		Features   []string `json:"features"`
 	}
 
-	VersionGerator struct {
+	Gerator struct {
 		ProjectPath string
 		Repo        *git.Repository
 		Commit      *object.Commit
@@ -29,7 +29,7 @@ type (
 )
 
 // NewVersion creates a new VersionGerator
-func NewVersion() (*VersionGerator, error) {
+func NewVersion() (*Gerator, error) {
 	projectPath, err := findGitRoot()
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func NewVersion() (*VersionGerator, error) {
 		return nil, err
 	}
 
-	p := &VersionGerator{
+	p := &Gerator{
 		ProjectPath: projectPath,
 		Repo:        repo,
 		Commit:      commit,
@@ -60,8 +60,8 @@ func NewVersion() (*VersionGerator, error) {
 }
 
 // Generate creates a version.go file in the destination path
-func (v *VersionGerator) Generate(destPath string) error {
-	destPath = filepath.Join(destPath, "version")
+func (v *Gerator) Generate() error {
+	destPath := filepath.Join(v.ProjectPath, "internal", "version")
 
 	// create folder if not exists
 	if _, err := os.Stat(destPath); os.IsNotExist(err) {
@@ -110,7 +110,7 @@ func (v *VersionGerator) Generate(destPath string) error {
 }
 
 // getTag returns the tag of the repository
-func (v *VersionGerator) getTag() (string, error) {
+func (v *Gerator) getTag() (string, error) {
 	tags, err := v.Repo.Tags()
 	if err != nil {
 		return "", err

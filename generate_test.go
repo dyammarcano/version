@@ -9,6 +9,6 @@ func TestNewVersion(t *testing.T) {
 	v, err := NewVersion()
 	assert.NoError(t, err)
 
-	err = v.Generate(v.ProjectPath)
+	err = v.Generate()
 	assert.NoError(t, err)
 }
