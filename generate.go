@@ -95,14 +95,12 @@ func (v *Gerator) Generate() error {
 		Date:       date,
 	}
 
-	templateVersionFile := filepath.Join("version.tmpl")
-
-	tmpl, err := template.New(templateVersionFile).ParseFiles(templateVersionFile)
+	tmpl, err := template.New(versionFile).Parse(templateFile)
 	if err != nil {
 		return fmt.Errorf("error parsing template: %w", err)
 	}
 
-	if err = tmpl.Execute(file, data); err != nil {
+	if err = tmpl.ExecuteTemplate(file, versionFile, data); err != nil {
 		return fmt.Errorf("error executing template: %w", err)
 	}
 
