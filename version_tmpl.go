@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-var i *info
+var i *Info
 
-type info struct {
+type Info struct {
 	Version    string   ` + "`json:\"version\"`" + `
 	CommitHash string   ` + "`json:\"commitHash\"`" + `
 	Date       string   ` + "`json:\"date\"`" + `
@@ -19,12 +19,17 @@ type info struct {
 }
 
 func init() {
-	i = &info{
+	i = &Info{
 		Version:    "{{.Version}}",
 		CommitHash: "{{.CommitHash}}",
 		Date:       "{{.Date}}",
 		Features:   []string{},
 	}
+}
+
+// G returns the Info struct
+func G() Info {
+	return *i
 }
 
 // AddFeature adds a feature description
