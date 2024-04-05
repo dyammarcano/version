@@ -3,7 +3,7 @@
 ## Version generate
 
 ```go
-//go:bulid generate
+//go:build generate
 
 package main
 
