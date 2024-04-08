@@ -28,8 +28,8 @@ func init() {
 }
 
 // G returns the Info struct
-func G() Info {
-	return *i
+func G() *Info {
+	return i
 }
 
 // AddFeature adds a feature description
