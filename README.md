@@ -56,3 +56,9 @@ init() {
 ```bash
 $ go generate ./...
 ```
+
+## VERSION file
+
+```json
+{"version":"v0.0.0","commitHash":"5f600de951b8a0c5bb7b035d8f95aaaaf534c9e3","date":"2024-05-15T02:24:46Z"}
+```
