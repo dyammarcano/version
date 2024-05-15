@@ -3,10 +3,10 @@ package version
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/caarlos0/log"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -79,6 +79,8 @@ func (g *Generator) Generate() error {
 
 	versionFile := filepath.Join(destPath, versionFileName)
 
+	log.Infof("generating version file: %s", versionFile)
+
 	file, err := os.Create(versionFile)
 	if err != nil {
 		return err
@@ -118,7 +120,7 @@ func (g *Generator) Generate() error {
 func (g *Generator) getTag() (string, error) {
 	tags, err := g.repo.Tags()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error getting tags: %w", err)
 	}
 
 	tag := defaultTag
@@ -132,23 +134,26 @@ func (g *Generator) getTag() (string, error) {
 	}
 
 	if err = tags.ForEach(callback); err != nil {
-		return "", err
+		return "", fmt.Errorf("error getting tags: %w", err)
 	}
 
 	return tag, nil
 }
 
+// genTxt creates a VERSION file with the version information
 func (g *Generator) genTxt(ver *Version) error {
 	txtFile := filepath.Join(g.projectPath, txtName)
 	file, err := os.Create(txtFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating file: %w", err)
 	}
 	defer func(file *os.File) {
 		if err = file.Close(); err != nil {
 			log.Fatalf("error closing file: %g", err)
 		}
 	}(file)
+
+	log.Infof("generating version file: %s", txtFile)
 
 	if err = json.NewEncoder(file).Encode(ver); err != nil {
 		return fmt.Errorf("error encoding json: %w", err)
@@ -162,8 +167,7 @@ func findGitRoot() (string, error) {
 	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
 	output, err := cmd.Output()
 	if err != nil {
-		fmt.Println("Error:", err)
-		return "", err
+		return "", fmt.Errorf("error getting git root: %w", err)
 	}
 
 	projectRoot := strings.TrimSpace(string(output))

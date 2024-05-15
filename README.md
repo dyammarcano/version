@@ -1,6 +1,12 @@
 # Version display and features names
 
 This package is used to display the version of the application and the number of features that it has. It uses the git tags to display the version and the number of features. and it generates a file with the version json data in the project root.
+
+## How to use
+
+```bash
+$ go get -u "github.com/dyammarcano/version"
+```
 ## Example gen.go file
 
 ```go
@@ -24,6 +30,7 @@ func main() {
 		panic(err)
 	}
 }
+
 ```
 
 ## Map feature in your project
@@ -38,4 +45,10 @@ import (
 init() {
     version.AddFeature("feature1")
 }
+```
+
+## How to generate the version file
+
+```bash
+$ go generate ./...
 ```
