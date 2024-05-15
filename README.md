@@ -1,29 +1,27 @@
 # Version display and features count
 
-## Version generate
+This package is used to display the version of the application and the number of features that it has. It uses the git tags to display the version and the number of features. and it generates a file with the version json data in the project root.
+## Example gen.go file
 
 ```go
 //go:build generate
 
 package main
 
-//go:generate go run thisFile.go
+//go:generate go run gen.go
 
 import (
-    "fmt"
-    "github.com/dyammarcano/version"
+	"github.com/dyammarcano/version"
 )
 
 func main() {
-    ver, err := version.NewVersion()
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-	
-    if err = ver.Generate(); err != nil {
-        fmt.Println(err)
-        return
-    }
+	ver, err := version.NewVersion()
+	if err != nil {
+		panic(err)
+	}
+
+	if err = ver.Generate(); err != nil {
+		panic(err)
+	}
 }
 ```

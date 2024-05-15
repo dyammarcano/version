@@ -1,6 +1,7 @@
 package version
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -13,23 +14,29 @@ import (
 	"text/template"
 )
 
+const (
+	defaultTag      = "v0.0.0"
+	txtName         = "VERSION"
+	versionFileName = "version.go"
+)
+
 type (
 	Version struct {
 		Version    string   `json:"version"`
 		CommitHash string   `json:"commitHash"`
 		Date       string   `json:"date"`
-		Features   []string `json:"features"`
+		Features   []string `json:"features,omitempty"`
 	}
 
-	Gerator struct {
-		ProjectPath string
-		Repo        *git.Repository
-		Commit      *object.Commit
+	Generator struct {
+		projectPath string
+		repo        *git.Repository
+		commit      *object.Commit
 	}
 )
 
 // NewVersion creates a new VersionGerator
-func NewVersion() (*Gerator, error) {
+func NewVersion() (*Generator, error) {
 	projectPath, err := findGitRoot()
 	if err != nil {
 		return nil, err
@@ -50,18 +57,18 @@ func NewVersion() (*Gerator, error) {
 		return nil, err
 	}
 
-	p := &Gerator{
-		ProjectPath: projectPath,
-		Repo:        repo,
-		Commit:      commit,
+	p := &Generator{
+		projectPath: projectPath,
+		repo:        repo,
+		commit:      commit,
 	}
 
 	return p, nil
 }
 
 // Generate creates a version.go file in the destination path
-func (v *Gerator) Generate() error {
-	destPath := filepath.Join(v.ProjectPath, "internal", "version")
+func (g *Generator) Generate() error {
+	destPath := filepath.Join(g.projectPath, "internal", "version")
 
 	// create folder if not exists
 	if _, err := os.Stat(destPath); os.IsNotExist(err) {
@@ -70,7 +77,7 @@ func (v *Gerator) Generate() error {
 		}
 	}
 
-	versionFile := filepath.Join(destPath, "version.go")
+	versionFile := filepath.Join(destPath, versionFileName)
 
 	file, err := os.Create(versionFile)
 	if err != nil {
@@ -78,20 +85,20 @@ func (v *Gerator) Generate() error {
 	}
 	defer func(file *os.File) {
 		if err = file.Close(); err != nil {
-			log.Fatalf("error closing file: %v", err)
+			log.Fatalf("error closing file: %g", err)
 		}
 	}(file)
 
-	date := v.Commit.Author.When.Format("2006-01-02T15:04:05Z")
+	date := g.commit.Author.When.Format("2006-01-02T15:04:05Z")
 
-	tag, err := v.getTag()
+	tag, err := g.getTag()
 	if err != nil {
 		return fmt.Errorf("error getting tag: %w", err)
 	}
 
 	data := &Version{
 		Version:    tag,
-		CommitHash: v.Commit.Hash.String(),
+		CommitHash: g.commit.Hash.String(),
 		Date:       date,
 	}
 
@@ -104,17 +111,17 @@ func (v *Gerator) Generate() error {
 		return fmt.Errorf("error executing template: %w", err)
 	}
 
-	return nil
+	return g.genTxt(data)
 }
 
 // getTag returns the tag of the repository
-func (v *Gerator) getTag() (string, error) {
-	tags, err := v.Repo.Tags()
+func (g *Generator) getTag() (string, error) {
+	tags, err := g.repo.Tags()
 	if err != nil {
 		return "", err
 	}
 
-	tag := "v0.0.0"
+	tag := defaultTag
 
 	callback := func(ref *plumbing.Reference) error {
 		if ref.Name().IsTag() {
@@ -129,6 +136,25 @@ func (v *Gerator) getTag() (string, error) {
 	}
 
 	return tag, nil
+}
+
+func (g *Generator) genTxt(ver *Version) error {
+	txtFile := filepath.Join(g.projectPath, txtName)
+	file, err := os.Create(txtFile)
+	if err != nil {
+		return err
+	}
+	defer func(file *os.File) {
+		if err = file.Close(); err != nil {
+			log.Fatalf("error closing file: %g", err)
+		}
+	}(file)
+
+	if err = json.NewEncoder(file).Encode(ver); err != nil {
+		return fmt.Errorf("error encoding json: %w", err)
+	}
+
+	return nil
 }
 
 // findGitRoot returns the root path of the git repository

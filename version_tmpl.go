@@ -15,7 +15,7 @@ type Info struct {
 	Version    string   ` + "`json:\"version\"`" + `
 	CommitHash string   ` + "`json:\"commitHash\"`" + `
 	Date       string   ` + "`json:\"date\"`" + `
-	Features   []string ` + "`json:\"features\"`" + `
+	Features   []string ` + "`json:\"features,omitempty\"`" + `
 }
 
 func init() {
