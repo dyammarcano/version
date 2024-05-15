@@ -1,4 +1,6 @@
-[![ci-test](https://github.com/dyammarcano/version/actions/workflows/ci.yml/badge.svg)](https://github.com/dyammarcano/version/actions/workflows/ci.yml)
+[![ci-test](https://github.com/dyammarcano/version/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dyammarcano/version/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dyammarcano/version)](https://goreportcard.com/report/github.com/dyammarcano/version)
+[![Go Reference](https://pkg.go.dev/badge/github.com/dyammarcano/version.svg)](https://pkg.go.dev/github.com/dyammarcano/version)
 
 # Version display and features names
 
