@@ -140,7 +140,7 @@ func (g *Generator) Generate() error {
 
 	versionFile := filepath.Join(destPath, versionFileName)
 
-	log.Infof("generating version file: %s", versionFile)
+	log.Infof("generating go file: %s", versionFile)
 
 	file, err := fs.Create(versionFile)
 	if err != nil {
