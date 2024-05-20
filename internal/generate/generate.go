@@ -1,4 +1,4 @@
-package version
+package generate
 
 import (
 	"encoding/json"
@@ -7,17 +7,82 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/spf13/afero"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"strings"
 	"text/template"
 )
+
+var fs afero.Fs
+
+func init() {
+	fs = afero.NewOsFs()
+}
 
 const (
 	defaultTag      = "v0.0.0"
 	txtName         = "VERSION"
 	versionFileName = "version.go"
+	templateFile    = `// this file version.go was generated with go generate command
+
+package version
+
+import (
+	"fmt"
+	"strings"
+)
+
+var i *Info
+
+type Info struct {
+	Version    string   ` + "`json:\"version\"`" + `
+	CommitHash string   ` + "`json:\"commitHash\"`" + `
+	Date       string   ` + "`json:\"date\"`" + `
+	Features   []string ` + "`json:\"features,omitempty\"`" + `
+}
+
+func init() {
+	i = &Info{
+		Version:    "{{.Version}}",
+		CommitHash: "{{.CommitHash}}",
+		Date:       "{{.Date}}",
+		Features:   []string{},
+	}
+}
+
+// G returns the Info struct
+func G() *Info {
+	return i
+}
+
+// AddFeature adds a feature description
+func AddFeature(feature string) {
+	i.Features = append(i.Features, fmt.Sprintf("+%s", feature))
+}
+
+// GetVersionInfo returns the info
+func GetVersionInfo() string {
+	var sb strings.Builder
+	sb.WriteString(i.Version)
+
+	if i.CommitHash != "" {
+		sb.WriteString("-")
+		sb.WriteString(i.CommitHash)
+	}
+
+	if i.Date != "" {
+		sb.WriteString("-")
+		sb.WriteString(i.Date[:10]) // format date to yyyy-mm-dd
+	}
+
+	if len(i.Features) > 0 {
+		sb.WriteString(" ")
+		sb.WriteString(strings.Join(i.Features, " "))
+	}
+
+	return sb.String()
+}
+`
 )
 
 type (
@@ -36,13 +101,9 @@ type (
 )
 
 // NewVersion creates a new VersionGerator
-func NewVersion() (*Generator, error) {
-	projectPath, err := findGitRoot()
-	if err != nil {
-		return nil, err
-	}
-
-	repo, err := git.PlainOpen(projectPath) // open project dir
+func NewVersion(projectPath string) (*Generator, error) {
+	projectPath = filepath.Clean(projectPath)
+	repo, err := git.PlainOpen(projectPath)
 	if err != nil {
 		return nil, err
 	}
@@ -71,21 +132,21 @@ func (g *Generator) Generate() error {
 	destPath := filepath.Join(g.projectPath, "internal", "version")
 
 	// create folder if not exists
-	if _, err := os.Stat(destPath); os.IsNotExist(err) {
-		if err = os.MkdirAll(destPath, os.ModePerm); err != nil {
+	if _, err := fs.Stat(destPath); os.IsNotExist(err) {
+		if err = fs.MkdirAll(destPath, os.ModePerm); err != nil {
 			return err
 		}
 	}
 
 	versionFile := filepath.Join(destPath, versionFileName)
 
-	log.Infof("generating version file: %s", versionFile)
+	log.Infof("generating go file: %s", versionFile)
 
-	file, err := os.Create(versionFile)
+	file, err := fs.Create(versionFile)
 	if err != nil {
 		return err
 	}
-	defer func(file *os.File) {
+	defer func(file afero.File) {
 		if err = file.Close(); err != nil {
 			log.Fatalf("error closing file: %g", err)
 		}
@@ -143,11 +204,11 @@ func (g *Generator) getTag() (string, error) {
 // genTxt creates a VERSION file with the version information
 func (g *Generator) genTxt(ver *Version) error {
 	txtFile := filepath.Join(g.projectPath, txtName)
-	file, err := os.Create(txtFile)
+	file, err := fs.Create(txtFile)
 	if err != nil {
 		return fmt.Errorf("error creating file: %w", err)
 	}
-	defer func(file *os.File) {
+	defer func(file afero.File) {
 		if err = file.Close(); err != nil {
 			log.Fatalf("error closing file: %g", err)
 		}
@@ -160,17 +221,4 @@ func (g *Generator) genTxt(ver *Version) error {
 	}
 
 	return nil
-}
-
-// findGitRoot returns the root path of the git repository
-func findGitRoot() (string, error) {
-	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", fmt.Errorf("error getting git root: %w", err)
-	}
-
-	projectRoot := strings.TrimSpace(string(output))
-
-	return filepath.Clean(projectRoot), nil
 }

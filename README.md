@@ -9,32 +9,25 @@ This package is used to display the version of the application and the number of
 ## How to use
 
 ```bash
-$ go get -u "github.com/dyammarcano/version"
+$ go install "github.com/dyammarcano/version@latest"
 ```
-## Example gen.go file
+## Example using the command line confirmation
 
-```go
-//go:build generate
+```bash
+$ version generate -p your_project_root
 
-package main
+? Do you want to generate a new version?? [y/N] █
+  • generating go file: your_project_root\internal\version\version.go
+  • generating version file: your_project_root\VERSION
+```
 
-//go:generate go run gen.go
+## Example using the go generate with the -y flag to avoid the confirmation
 
-import (
-	"github.com/dyammarcano/version"
-)
+```bash
+$ version generate -p your_project_root -y
 
-func main() {
-	ver, err := version.NewVersion()
-	if err != nil {
-		panic(err)
-	}
-
-	if err = ver.Generate(); err != nil {
-		panic(err)
-	}
-}
-
+  • generating go file: your_project_root\internal\version\version.go
+  • generating version file: your_project_root\VERSION
 ```
 
 ## Map feature in your project
