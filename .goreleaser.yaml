@@ -16,8 +16,6 @@ before:
     - go generate ./...
 
 builds:
-  - main: ./
-    ldflags: -s -w
   - env:
       - CGO_ENABLED=0
     goos:
@@ -25,6 +23,7 @@ builds:
       - windows
     goarch:
       - amd64
+
 archives:
   - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of `uname`.
